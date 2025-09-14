@@ -114,7 +114,22 @@ text-shadow: 0 0 10px #ccffffff;
   
   <!-- Rel time clock -->
   <div id="realtime">--:--:--</div>
+  <body>
 
+<!-- ✈️ Orbit va Crash Value markazi -->
+<div class="-container" style="position: relative; width: 500px; height: 500px; margin: auto;">
+    <!-- Orbit chizadigan canvas -->
+    <canvas id="orbitCanvas" width="500" height="500" style="position:absolute; top:0; left:0; z-index:1;"></canvas>
+
+    <!-- Crash Value o‘rtada -->
+    <div class="content-container" style="position: relative; width: 100%; height: 100%; display:flex; justify-content:center; align-items:center; z-index:2;">
+        <div id="crashValue" data-text="0.00">0.00</div>
+    </div>
+</div>
+
+<!-- boshqa elementlaringiz shu yerda qolishi mumkin -->
+
+  </body>
 
   <!-- Sizning eski scriptlaringiz, server, encrypted code — TEGMADIM -->
   <script>
@@ -129,7 +144,64 @@ text-shadow: 0 0 10px #ccffffff;
     setInterval(updateClock, 1000);
     updateClock();
   </script>
+  <script>
+const canvas = document.getElementById("orbitCanvas");
+const ctx = canvas.getContext("2d");
+let angle = 0;
 
+function drawOrbit() {
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.strokeStyle = "#E10600";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([15, 10]);
+    ctx.lineDashOffset = -angle * 2;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, 120, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, 200, 0, Math.PI * 2);
+    ctx.stroke();
+
+    drawPlane(cx, cy, 200, angle, true);
+    drawPlane(cx, cy, 200, angle + 120, true);
+    drawPlane(cx, cy, 200, angle + 240, true);
+
+    drawPlane(cx, cy, 120, -angle, false);
+    drawPlane(cx, cy, 120, -angle + 180, false);
+
+    angle += 2;
+    requestAnimationFrame(drawOrbit);
+}
+
+function drawPlane(cx, cy, radius, angleDeg, clockwise) {
+    const rad = (angleDeg * Math.PI) / 180;
+    const x = cx + radius * Math.cos(rad);
+    const y = cy + radius * Math.sin(rad);
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rad + (clockwise ? 0 : Math.PI));
+
+    const planeImg = new Image();
+    planeImg.src = "plane.png";
+    planeImg.onload = function () {
+        ctx.drawImage(planeImg, -15, -15, 30, 30);
+    };
+
+    ctx.restore();
+}
+
+drawOrbit();
+</script>
+</body>
   <!-- Siz yuborgan eski scriptlar shu yerda turadi (tegmadim) -->
   <!-- ... (eski JS code + encrypted websocket kodingiz) ... -->
 
